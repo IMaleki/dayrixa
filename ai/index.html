@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAYRIXA AI Hub — Prototype v13.1</title>
+<meta name="description" content="DAYRIXA AI Hub experimental prototype. Testnet project. No monetary value.">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="dayrixa-public-brand">
+  <a href="../" class="dayrixa-home-link">
+    <img src="../assets/dayrixa-drxa-logo.png" alt="DAYRIXA logo">
+    <span>DAYRIXA</span>
+  </a>
+  <span class="dayrixa-hub-label">AI Hub · Experimental Research Assistant</span>
+</div>
+<div class="lang-switch" aria-label="Language">
+  <button id="langEN" class="lang-btn active">EN</button>
+  <button id="langFA" class="lang-btn">فارسی</button>
+</div>
+
+<div class="noise"></div>
+
+<aside class="sidebar">
+  <div>
+    <a class="logo" href="#home">DAYRIXA</a>
+    <div class="prototype-badge">AI HUB · PROTOTYPE v13.1</div>
+  </div>
+
+  <nav class="side-nav">
+    <button class="nav-item active" data-view="home">
+      <span class="ico">⌂</span><span>Hub Home</span>
+    </button>
+    <button class="nav-item" data-view="sentiment">
+      <span class="ico">◈</span><span>AI Sentiment</span>
+    </button>
+    <button class="nav-item" data-view="research">
+      <span class="ico">⌕</span><span>Research Agent</span><small>beta</small>
+    </button>
+    <button class="nav-item locked" data-view="data">
+      <span class="ico">▥</span><span>Data Analyst</span><small>soon</small>
+    </button>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="network-card">
+      <span class="pulse"></span>
+      <div>
+        <strong>BNB Testnet</strong>
+        <small>Chain ID 97</small>
+      </div>
+    </div>
+    <div class="scope-note">
+      Experimental only<br>
+      No sale · No real liquidity<br>
+      No mainnet
+    </div>
+  </div>
+</aside>
+
+<main class="app">
+  <header class="topbar">
+    <div class="mobile-brand">DAYRIXA</div>
+    <div class="top-status">
+      <span class="dot"></span>
+      Prototype environment
+    </div>
+    <a class="outline-link" target="_blank" rel="noopener"
+       href="https://testnet.bscscan.com/address/0xfD750DB45d82d020866B061CEb656e2C9b69DA2D">
+       DRXA Testnet ↗
+    </a>
+  </header>
+
+  <section id="view-home" class="view active">
+    <div class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">DAYRIXA AI HUB</div>
+        <h1>One interface.<br><span>Multiple AI capabilities.</span></h1>
+        <p>
+          The evolving DAYRIXA product prototype. The Hub is designed as a modular
+          workspace where AI tools can be added independently while sharing one account,
+          navigation and future credit layer.
+        </p>
+        <div class="hero-actions">
+          <button class="primary" data-open="sentiment">Launch first AI tool</button>
+          <button class="secondary" id="architectureBtn">View architecture</button>
+        </div>
+      </div>
+
+      <div class="hub-visual" aria-hidden="true">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="hub-core"><img src="../assets/dayrixa-drxa-logo.png" alt="DAYRIXA DRXA logo"></div>
+        <div class="node n1">AI</div>
+        <div class="node n2">DATA</div>
+        <div class="node n3">WEB3</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">TOOLS</div>
+        <h2>AI workspace</h2>
+      </div>
+      <span class="micro">2 working modules · live academic search enabled</span>
+    </div>
+
+    <div class="tool-grid">
+      <article class="tool-card live-card">
+        <div class="tool-top">
+          <div class="tool-icon">◈</div>
+          <span class="live-pill">LIVE</span>
+        </div>
+        <h3>AI Sentiment Analyzer</h3>
+        <p>Run a real transformer model in your browser to classify English text as positive or negative.</p>
+        <div class="tool-meta">
+          <span>Browser AI</span><span>Private input</span><span>No API key</span>
+        </div>
+        <button class="card-btn" data-open="sentiment">Open tool →</button>
+      </article>
+
+      <article class="tool-card live-card">
+        <div class="tool-top"><div class="tool-icon">⌕</div><span class="live-pill">BETA</span></div>
+        <h3>Research Agent</h3>
+        <p>Search scholarly metadata, validate claims, classify claim type, and build a research-ready evidence table.</p>
+        <div class="tool-meta"><span>Research</span><span>Sources</span><span>Evidence</span></div>
+        <button class="card-btn" data-open="research">Open agent →</button>
+      </article>
+
+      <article class="tool-card muted-card">
+        <div class="tool-top"><div class="tool-icon">▥</div><span class="soon-pill">PLANNED</span></div>
+        <h3>Data Analyst</h3>
+        <p>Planned module for CSV analysis, summaries, charts and explainable data workflows.</p>
+        <div class="tool-meta"><span>Planned</span><span>Data</span></div>
+      </article>
+    </div>
+
+    <div id="architecture" class="architecture">
+      <div class="section-head compact">
+        <div>
+          <div class="eyebrow">ARCHITECTURE</div>
+          <h2>Prototype application structure</h2>
+        </div>
+      </div>
+      <div class="arch-grid">
+        <div class="arch-box">
+          <strong>01 · Interface Layer</strong>
+          <span>Hub navigation, tool workspace, status and future account UI.</span>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">
+          <strong>02 · Tool Modules</strong>
+          <span>Independent AI tools with a shared product shell.</span>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box">
+          <strong>03 · Future Service Layer</strong>
+          <span>APIs, model routing, usage accounting and testnet integrations.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-sentiment" class="view">
+    <div class="tool-page-head">
+      <button class="back" data-open="home">← Hub</button>
+      <div>
+        <div class="eyebrow">FIRST WORKING AI MODULE</div>
+        <h1>AI Sentiment Analyzer</h1>
+        <p>
+          This tool uses a transformer sentiment-classification model in the browser.
+          Your text is processed locally after the model files are loaded.
+        </p>
+      </div>
+    </div>
+
+    <div class="workspace">
+      <div class="input-panel">
+        <label for="sentimentInput">Text to analyze</label>
+        <textarea id="sentimentInput" maxlength="1600"
+          placeholder="Example: The new product is easy to use and I am very satisfied with the result."></textarea>
+        <div class="input-footer">
+          <span id="charCount">0 / 1600</span>
+          <button class="primary" id="analyzeBtn">Analyze with AI</button>
+        </div>
+      </div>
+
+      <div class="result-panel">
+        <div class="result-header">
+          <span>Result</span>
+          <span id="modelState" class="model-state">Model not loaded</span>
+        </div>
+
+        <div id="emptyResult" class="empty-result">
+          <div class="result-orb">A</div>
+          <h3>Ready for analysis</h3>
+          <p>The AI model loads the first time you run the tool. Initial download may take a moment.</p>
+        </div>
+
+        <div id="loadingResult" class="loading-result hidden">
+          <div class="loader"></div>
+          <h3 id="loadingTitle">Loading AI model…</h3>
+          <p id="loadingText">Preparing browser inference.</p>
+        </div>
+
+        <div id="finalResult" class="final-result hidden">
+          <div id="sentimentBadge" class="sentiment-badge">POSITIVE</div>
+          <div id="confidenceValue" class="confidence-value">98.4%</div>
+          <div class="confidence-label">model confidence</div>
+          <div class="confidence-track"><div id="confidenceBar" class="confidence-bar"></div></div>
+          <div class="result-note">
+            This is a model classification, not a factual judgment. Use it as one signal rather than a definitive conclusion.
+          </div>
+        </div>
+
+        <div id="errorResult" class="error-result hidden">
+          <h3>Model could not load</h3>
+          <p id="errorText"></p>
+          <button id="retryBtn" class="secondary">Retry</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy-strip">
+      <strong>Prototype privacy note</strong>
+      <span>No text is intentionally sent to DAYRIXA. The AI model runs in your browser. Model files are fetched from a public model/CDN service on first use.</span>
+    </div>
+  </section>
+
+  <section id="view-research" class="view">
+    <div class="tool-page-head">
+      <button class="back" data-open="home">← Hub</button>
+      <div>
+        <div class="eyebrow">SECOND WORKING MODULE · BETA</div>
+        <h1>DAYRIXA Research Agent</h1>
+        <p>
+          Turn a research question into a structured investigation plan with sub-questions,
+          recommended source types, evidence tracking and citation-ready notes.
+        </p>
+      </div>
+    </div>
+
+    <div class="research-layout">
+      <div class="research-controls">
+        <label for="researchTopic">Research question</label>
+        <textarea id="researchTopic" maxlength="1200"
+          placeholder="Example: How is generative AI changing financial risk analysis in banks?"></textarea>
+
+        <div class="research-options">
+          <label>
+            Research depth
+            <select id="researchDepth">
+              <option value="quick">Quick scan</option>
+              <option value="standard" selected>Standard</option>
+              <option value="deep">Deep</option>
+            </select>
+          </label>
+          <label>
+            Output style
+            <select id="researchStyle">
+              <option value="academic">Academic</option>
+              <option value="market">Market / industry</option>
+              <option value="technical">Technical</option>
+            </select>
+          </label>
+        </div>
+
+        <button class="primary" id="buildResearchBtn">Build research plan</button>
+        <button class="secondary research-live-btn" id="liveSearchBtn">Search academic sources live</button>
+        <div id="liveSearchStatus" class="live-search-status">Ready for live academic search.</div>
+        <div class="research-scope">
+          Prototype note: this version builds the research structure locally. It does not yet browse the web automatically.
+          The next integration step will add live source retrieval.
+        </div>
+      </div>
+
+      <div class="research-output">
+        <div class="result-header">
+          <span>Research workspace</span>
+          <span class="model-state">Local planner · beta</span>
+        </div>
+
+        <div id="researchEmpty" class="empty-result">
+          <div class="result-orb">R</div>
+          <h3>Ready to structure a topic</h3>
+          <p>Enter a question and DAYRIXA will build an investigation framework you can use immediately.</p>
+        </div>
+
+        <div id="researchResult" class="research-result hidden">
+          <div class="research-block">
+            <div class="research-label">Working thesis</div>
+            <p id="workingThesis"></p>
+          </div>
+
+          <div class="research-block">
+            <div class="research-label">Core questions</div>
+            <ol id="coreQuestions"></ol>
+          </div>
+
+          <div class="research-block">
+            <div class="research-label">Source strategy</div>
+            <div id="sourceStrategy" class="source-chips"></div>
+          </div>
+
+          <div class="research-block">
+            <div class="research-label">Evidence matrix</div>
+            <div class="evidence-table-wrap">
+              <table class="evidence-table">
+                <thead><tr><th>Claim / question</th><th>Best evidence</th><th>Source target</th></tr></thead>
+                <tbody id="evidenceBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="research-block">
+            <div class="research-label">Live academic sources</div>
+            <div class="source-toolbar">
+              <span id="sourceCount">No live search yet</span>
+              <button class="mini-btn" id="exportSourcesBtn" disabled>Copy sources</button>
+            </div>
+            <div class="ranking-note">DAYRIXA separates topical relevance from publication/evidence signals. Publication type and citation/recency indicators are shown explicitly instead of being treated as proof of scientific quality.</div>
+            <div id="academicSources" class="academic-sources">
+              <div class="source-placeholder">Run a live academic search to retrieve papers.</div>
+            
+
+            </div>
+<section class="synthesis-panel" id="synthesisPanel">
+              <div class="synthesis-head">
+                <div>
+                  <div class="synthesis-kicker">DAYRIXA · Evidence Synthesis</div>
+                  <h3>Research synthesis</h3>
+                </div>
+                <div class="synthesis-actions">
+                  <select id="synthesisCount" aria-label="Number of sources">
+                    <option value="3">Top 3</option>
+                    <option value="5" selected>Top 5</option>
+                  </select>
+                  <button class="mini-btn" id="synthesizeBtn" disabled>Synthesize evidence</button>
+                  <button class="mini-btn" id="copySynthesisBtn" disabled>Copy synthesis</button>
+                </div>
+              </div>
+              <div class="synthesis-warning">Abstract-level synthesis only. DAYRIXA will not claim findings that are absent from retrieved metadata/abstracts. Open the underlying works before using claims in formal research.</div>
+              <div id="synthesisOutput" class="synthesis-empty">Run live academic search, then synthesize the strongest available sources.</div>
+            </section>
+
+            <section class="claim-panel" id="claimPanel">
+              <div class="synthesis-head">
+                <div>
+                  <div class="synthesis-kicker">DAYRIXA · Claim Intelligence</div>
+                  <h3>Claim & evidence table</h3>
+                </div>
+                <div class="synthesis-actions">
+                  <select id="claimCount" aria-label="Number of sources for claim extraction">
+                    <option value="3">Top 3</option>
+                    <option value="5" selected>Top 5</option>
+                  </select>
+                  <button class="mini-btn" id="buildClaimsBtn" disabled>Build evidence table</button>
+                  <button class="mini-btn" id="copyClaimsBtn" disabled>Copy table</button>
+                </div>
+              </div>
+              <div class="synthesis-warning">Claims are extracted from retrieved abstract text, then validated for direct usefulness to the research question. Background-only and insufficient claims are labeled rather than promoted as evidence.</div>
+              <div id="claimOutput" class="synthesis-empty">Run live academic search, then build the claim-to-source table.</div>
+            </section>
+
+
+          </div>
+
+          <div class="research-block">
+            <div class="research-label">Citation-ready note template</div>
+            <pre id="citationTemplate" class="citation-template"></pre>
+          </div>
+
+          <div class="research-actions">
+            <button class="secondary" id="copyResearchBtn">Copy workspace</button>
+            <button class="secondary" id="clearResearchBtn">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy-strip">
+      <strong>Current beta boundary</strong>
+      <span>Live search retrieves scholarly metadata from Crossref and OpenAlex. Results are discovery leads, not proof of scientific quality; verify the paper itself before relying on a claim.</span>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="app.js"></script>
+
+<footer class="dayrixa-public-footer">
+  <div><strong>DAYRIXA AI Hub</strong> · Experimental Research Assistant</div>
+  <div>© 2026 DAYRIXA. All rights reserved.<br>Created and developed by Iman Malekikhajkolaei.</div>
+  <p>Academic titles, abstracts, DOI metadata, publisher names, trademarks and other third-party scholarly materials remain the property of their respective owners. DAYRIXA does not claim ownership of third-party scholarly content.</p>
+  <p>Research outputs are assistance only and should be verified against original sources and full text where appropriate.</p>
+  <p>DRXA is an experimental test token with no monetary value. BNB Smart Chain Testnet only · No sale · No fundraising · No real liquidity · No mainnet.</p>
+</footer>
+
+</body>
+</html>
