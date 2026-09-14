@@ -18,8 +18,15 @@ background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='htt
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar);padding:26px 18px 20px;
 border-right:1px solid var(--line);background:#050a10e8;backdrop-filter:blur(18px);
 display:flex;flex-direction:column;justify-content:space-between;z-index:10}
-.logo{font-size:21px;font-weight:900;letter-spacing:.12em;text-decoration:none;color:var(--text);display:inline-block}
-.logo span{color:var(--blue)}
+.logo{
+  width:150px;
+  height:48px;
+  display:block;
+  background:url("../dayrixa-drxa-logo.png") center/contain no-repeat;
+  font-size:0;
+  text-decoration:none;
+}
+.logo span{display:none}
 .prototype-badge{margin-top:8px;color:#6f879a;font-size:9px;letter-spacing:.14em}
 .side-nav{display:grid;gap:7px;margin-top:36px}
 .nav-item{border:0;background:transparent;color:#8197a9;text-align:left;display:grid;grid-template-columns:26px 1fr auto;
@@ -56,8 +63,20 @@ gap:18px;padding:0 34px;background:#050a10a8;backdrop-filter:blur(15px);position
 .ring{position:absolute;border-radius:50%;border:1px solid #1e4f6f}
 .ring-1{width:82%;height:82%;animation:spin 20s linear infinite}
 .ring-2{width:58%;height:58%;border-style:dashed;animation:spin 13s linear infinite reverse}
-.hub-core{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;font-size:54px;font-weight:900;
-background:radial-gradient(circle at 35% 30%,#225470,#07121c 62%);border:3px solid #79d5ff;box-shadow:0 0 45px #159bff70}
+.hub-core{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:0;
+  background:
+    radial-gradient(circle at 35% 30%,#225470,#07121c 62%),
+    url("../dayrixa-drxa-logo.png") center/72% no-repeat;
+  background-blend-mode:normal;
+  border:3px solid #79d5ff;
+  box-shadow:0 0 45px #159bff70;
+}
 .node{position:absolute;background:#091724;border:1px solid #285779;color:#87d9ff;border-radius:999px;padding:8px 12px;font-size:9px;font-weight:900}
 .n1{top:8%;left:42%}.n2{bottom:12%;left:4%}.n3{right:1%;bottom:24%}
 @keyframes spin{to{transform:rotate(360deg)}}
