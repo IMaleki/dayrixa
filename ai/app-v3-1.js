@@ -1049,3 +1049,46 @@ function setLanguage(lang){
 langFA?.addEventListener('click',()=>setLanguage('fa'));
 langEN?.addEventListener('click',()=>setLanguage('en'));
 setLanguage(localStorage.getItem('dayrixa-lang')||'en');
+
+
+// =========================================================
+// DAYRIXA v3.2 — Collapsible Sidebar
+// =========================================================
+(() => {
+  const STORAGE_KEY = "dayrixa-sidebar-collapsed";
+
+  function initSidebarToggle() {
+    const toggle = document.getElementById("sidebarToggle");
+    if (!toggle) return;
+
+    const icon = toggle.querySelector(".sidebar-toggle-icon");
+
+    const applyState = (collapsed) => {
+      document.body.classList.toggle("sidebar-collapsed", collapsed);
+      toggle.setAttribute("aria-expanded", String(!collapsed));
+      toggle.setAttribute("aria-label", collapsed ? "Expand sidebar" : "Collapse sidebar");
+      toggle.setAttribute("title", collapsed ? "Expand sidebar" : "Collapse sidebar");
+      if (icon) icon.textContent = collapsed ? "›" : "‹";
+    };
+
+    let saved = false;
+    try {
+      saved = localStorage.getItem(STORAGE_KEY) === "true";
+    } catch (_) {}
+    applyState(saved);
+
+    toggle.addEventListener("click", () => {
+      const collapsed = !document.body.classList.contains("sidebar-collapsed");
+      applyState(collapsed);
+      try {
+        localStorage.setItem(STORAGE_KEY, String(collapsed));
+      } catch (_) {}
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSidebarToggle);
+  } else {
+    initSidebarToggle();
+  }
+})();
