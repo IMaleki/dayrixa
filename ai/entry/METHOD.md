@@ -1,4 +1,4 @@
-# DAYRIXA Entry Lab 0.1 — implementation record
+# DAYRIXA Asset Pricing Analysis 0.4 — implementation record
 
 This is an experimental, single-stock research tool. It is **not** a replication of Gu–Kelly–Xiu and not a pretrained general market signal. The models actually fit the uploaded history; there are no hardcoded market forecasts. The sample is deterministic synthetic data, and can never produce a real entry recommendation.
 

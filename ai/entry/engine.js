@@ -7,30 +7,30 @@ const sd=a=>Math.sqrt(mean(a.map(x=>(x-mean(a))**2)));
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function rng(seed=49){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function csv(text){
- if(text.length>12000000)throw Error('حداکثر اندازه فایل ۱۲ مگابایت است.');
+ if(text.length>12000000)throw Error('Maximum file size is 12 MB.');
  const first=text.replace(/^\uFEFF/,'').split(/\r?\n/)[0]; const sep=first.includes('\t')?'\t':first.includes(';')?';':',';
  let rows=[],row=[],field='',quoted=false;
  for(let i=0;i<text.length;i++){let c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){field+='"';i++;}else quoted=!quoted;}else if(c===sep&&!quoted){row.push(field.trim());field='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;row.push(field.trim());if(row.some(Boolean))rows.push(row);row=[];field='';}else field+=c;}
- if(quoted)throw Error('علامت نقل‌قول فایل CSV بسته نشده است.');if(field||row.length){row.push(field.trim());rows.push(row);}
- if(rows.length<2)throw Error('فایل باید عنوان ستون‌ها و ردیف‌های داده داشته باشد.');
+ if(quoted)throw Error('The CSV contains an unclosed quotation mark.');if(field||row.length){row.push(field.trim());rows.push(row);}
+ if(rows.length<2)throw Error('The file must contain column headers and data rows.');
  const headers=rows.shift().map(x=>x.replace(/^\uFEFF/,'').toLowerCase().replace(/[ _-]/g,''));
  const idx=names=>headers.findIndex(x=>names.includes(x));
  const columns={date:idx(['date','datetime','time']),open:idx(['open']),high:idx(['high']),low:idx(['low']),close:idx(['close']),adj:idx(['adjclose','adjustedclose']),volume:idx(['volume']),symbol:idx(['symbol','ticker'])};
- if(['date','open','high','low','close','volume'].some(k=>columns[k]<0))throw Error('ستون‌های Date, Open, High, Low, Close, Volume لازم‌اند. Adj Close اختیاری است.');
+ if(['date','open','high','low','close','volume'].some(k=>columns[k]<0))throw Error('Required columns: Date, Open, High, Low, Close, Volume. Adj Close is optional.');
  const groups={}; const seen=new Set();
  rows.forEach((a,j)=>{
-  if(a.length!==headers.length)throw Error('تعداد ستون‌ها در ردیف '+(j+2)+' با عنوان‌ها برابر نیست.');
-  const date=a[columns.date]; if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date)throw Error('تاریخ ردیف '+(j+2)+' باید معتبر و به شکل YYYY-MM-DD باشد.');
-  const symbol=columns.symbol>=0?a[columns.symbol]:'UPLOADED';if(!symbol||symbol.length>40)throw Error('نماد نامعتبر است.');
-  const key=symbol+'|'+date;if(seen.has(key))throw Error('تاریخ تکراری برای '+symbol+': '+date);seen.add(key);
+  if(a.length!==headers.length)throw Error('Column count on row '+(j+2)+' does not match the header.');
+  const date=a[columns.date]; if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date)throw Error('Date on row '+(j+2)+' must be valid and formatted YYYY-MM-DD.');
+  const symbol=columns.symbol>=0?a[columns.symbol]:'UPLOADED';if(!symbol||symbol.length>40)throw Error('Invalid symbol.');
+  const key=symbol+'|'+date;if(seen.has(key))throw Error('Duplicate date for '+symbol+': '+date);seen.add(key);
   const nums={};['open','high','low','close','volume'].forEach(k=>{nums[k]=a[columns[k]]===''?NaN:Number(a[columns[k]].replace(/,/g,''));});
-  if(Object.values(nums).some(x=>!Number.isFinite(x))||['open','high','low','close'].some(k=>nums[k]<=0)||nums.volume<0)throw Error('قیمت یا حجم نامعتبر در ردیف '+(j+2));
-  if(nums.high<Math.max(nums.open,nums.close,nums.low)||nums.low>Math.min(nums.open,nums.close,nums.high))throw Error('High/Low با قیمت‌های ردیف '+(j+2)+' سازگار نیست.');
-  const adj=columns.adj>=0?Number(a[columns.adj]):nums.close;if(!Number.isFinite(adj)||adj<=0)throw Error('Adj Close نامعتبر در ردیف '+(j+2));
+  if(Object.values(nums).some(x=>!Number.isFinite(x))||['open','high','low','close'].some(k=>nums[k]<=0)||nums.volume<0)throw Error('Invalid price or volume on row '+(j+2));
+  if(nums.high<Math.max(nums.open,nums.close,nums.low)||nums.low>Math.min(nums.open,nums.close,nums.high))throw Error('High/Low is inconsistent with prices on row '+(j+2)+'.');
+  const adj=columns.adj>=0?Number(a[columns.adj]):nums.close;if(!Number.isFinite(adj)||adj<=0)throw Error('Invalid Adj Close on row '+(j+2));
   const factor=adj/nums.close;const r={date,symbol,rawClose:nums.close,volume:nums.volume};['open','high','low','close'].forEach(k=>r[k]=nums[k]*factor);
   (groups[symbol]??=[]).push(r);
  });
- for(const a of Object.values(groups)){a.sort((a,b)=>a.date.localeCompare(b.date));if(a.length>15000)throw Error('حداکثر ۱۵۰۰۰ ردیف برای هر نماد مجاز است.');}
+ for(const a of Object.values(groups)){a.sort((a,b)=>a.date.localeCompare(b.date));if(a.length>15000)throw Error('At most 15,000 rows per symbol are supported.');}
  return {groups,adjusted:columns.adj>=0};
 }
 function features(rows,i){
@@ -40,7 +40,7 @@ function features(rows,i){
 }
 function samples(rows,h){const out=[];for(let i=60;i+h<rows.length;i++)out.push({i,end:i+h,x:features(rows,i),y:rows[i+h].close/rows[i+1].open-1});return out;}
 function normalize(data){const p=data[0].x.length,m=Array.from({length:p},(_,j)=>mean(data.map(d=>d.x[j]))),s=Array.from({length:p},(_,j)=>sd(data.map(d=>d.x[j]))||1);return x=>x.map((v,j)=>clamp((v-m[j])/s[j],-10,10));}
-function solve(a,b){const n=b.length,A=a.map((r,i)=>[...r,b[i]]);for(let i=0;i<n;i++){let pivot=i;for(let j=i+1;j<n;j++)if(Math.abs(A[j][i])>Math.abs(A[pivot][i]))pivot=j;[A[i],A[pivot]]=[A[pivot],A[i]];const v=A[i][i];if(Math.abs(v)<1e-12)throw Error('حل مدل خطی ناموفق بود.');for(let k=i;k<=n;k++)A[i][k]/=v;for(let j=0;j<n;j++)if(j!==i){const f=A[j][i];for(let k=i;k<=n;k++)A[j][k]-=f*A[i][k];}}return A.map(r=>r[n]);}
+function solve(a,b){const n=b.length,A=a.map((r,i)=>[...r,b[i]]);for(let i=0;i<n;i++){let pivot=i;for(let j=i+1;j<n;j++)if(Math.abs(A[j][i])>Math.abs(A[pivot][i]))pivot=j;[A[i],A[pivot]]=[A[pivot],A[i]];const v=A[i][i];if(Math.abs(v)<1e-12)throw Error('Could not solve the linear model.');for(let k=i;k<=n;k++)A[i][k]/=v;for(let j=0;j<n;j++)if(j!==i){const f=A[j][i];for(let k=i;k<=n;k++)A[j][k]-=f*A[i][k];}}return A.map(r=>r[n]);}
 function fit(data,type){
  const norm=normalize(data),X=data.map(d=>norm(d.x)),ym=mean(data.map(d=>d.y)),ys=sd(data.map(d=>d.y))||1,Y=data.map(d=>(d.y-ym)/ys),p=X[0].length;
  if(type==='ridge'){
@@ -67,7 +67,7 @@ function fit(data,type){
   }
   return x=>{const z=norm(x);return ym+ys*(bias+W.reduce((s,w,k)=>s+V[k]*Math.tanh(w.reduce((v,a,j)=>v+a*z[j],B[k])),0));};
  }
- throw Error('مدل ناشناخته');
+ throw Error('Unknown model');
 }
 const mse=(ds,fn)=>mean(ds.map(d=>(d.y-fn(d.x))**2));
 function simulate(rows,ds,preds,h,cost,threshold){
@@ -83,11 +83,11 @@ function simulate(rows,ds,preds,h,cost,threshold){
 }
 function analyze(rows,options={},progress=()=>{}){
  const h=Number(options.horizon||21),cost=Number(options.costBps??20)/10000,threshold=.005;
- if(![21,63].includes(h)||!Number.isFinite(cost)||cost<0||cost>.02)throw Error('تنظیمات نامعتبر است.');
+ if(![21,63].includes(h)||!Number.isFinite(cost)||cost<0||cost>.02)throw Error('Invalid settings.');
  const intervals=rows.slice(1).map((r,i)=>(Date.parse(r.date)-Date.parse(rows[i].date))/864e5).sort((a,b)=>a-b);
- if(intervals.length&&intervals[Math.floor(intervals.length/2)]>3)throw Error('این نسخه به داده روزانه نیاز دارد؛ فاصله میانه تاریخ‌ها بیش از سه روز است.');
+ if(intervals.length&&intervals[Math.floor(intervals.length/2)]>3)throw Error('This version requires daily data; the median gap between dates exceeds three days.');
  const ds=samples(rows,h),v0=Math.floor(ds.length*.6),t0=Math.floor(ds.length*.8);
- if(rows.length<900||ds.length-t0<3*h)throw Error('برای آموزش و آزمون زمانی حداقل ۹۰۰ ردیف روزانه لازم است. فایل یک تا سه ماهه برای آموزش این نسخه کافی نیست.');
+ if(rows.length<900||ds.length-t0<3*h)throw Error('At least 900 daily rows are needed for training and time-based testing. One to three months of history is insufficient.');
  const valStart=ds[v0].i,testStart=ds[t0].i;
  const train=ds.filter(d=>d.i<valStart&&d.end<valStart),val=ds.filter(d=>d.i>=valStart&&d.end<testStart),test=ds.filter(d=>d.i>=testStart);
  const summaries=[];for(const type of ['ridge','boost','mlp']){progress(type);const fn=fit(train,type);summaries.push({type,valMSE:mse(val,fn)});}
@@ -102,13 +102,13 @@ function analyze(rows,options={},progress=()=>{}){
  const stale=Math.floor((Date.now()-Date.parse(rows.at(-1).date))/864e5)>7;
  const future=Date.parse(rows.at(-1).date)>Date.now()+864e5;
  const ready=selected.skill>0&&sim.total>sim.buyHold&&sim.total>0&&sim.trades.length>=12;
- let status='wait',reason='شواهد آزمون برای تأیید ورود کافی نیست.';
- if(options.demo){status='demo';reason='این داده مصنوعی است؛ خروجی برای شناخت ابزار است، نه تصمیم خرید.';}
- else if(stale||future||gaps||largeMoves){status='invalid';reason=future?'تاریخ داده در آینده است.':stale?'داده قدیمی است؛ وضعیت مربوط به آخرین تاریخ فایل است و سیگنال امروز نیست.':gaps?'وقفه بیش از ۷ روز در داده دیده شد؛ پیوستگی روزانه را بررسی کنید.':'تغییر روزانه بیش از ۵۰٪ دیده شد؛ تعدیل و رویدادهای شرکت را بررسی کنید.';}
- else if(!options.adjusted){status='invalid';reason='برای ارزیابی ورود، Adj Close معتبر یا تأیید تعدیل یکسان OHLC لازم است.';}
- else if(prediction<=cost+threshold){status='avoid';reason='بازده تخمینی از هزینه و حاشیه ورود عبور نکرده است.';}
- else if(latestVol>.15){status='wait';reason='نوسان اخیر برای افق انتخاب‌شده بالاست؛ ورود تأیید نشد.';}
- else if(ready){status='enter';reason='پیش‌بینی مثبت و قواعد اولیهٔ آزمون برقرارند. اعتبار سیگنال هنوز روی چند سهم و دوره مستقل تأیید نشده است.';}
+ let status='wait',reason='Test evidence is insufficient to confirm entry conditions.';
+ if(options.demo){status='demo';reason='This data is synthetic. Use the output to explore the tool, not to make a purchase decision.';}
+ else if(stale||future||gaps||largeMoves){status='invalid';reason=future?'The data contains a future date.':stale?'The data is stale. This assessment refers to the last date in the file, not today.':gaps?'A gap longer than 7 days was detected. Check daily data continuity.':'A daily change greater than 50% was detected. Check adjustments and corporate actions.';}
+ else if(!options.adjusted){status='invalid';reason='Entry assessment requires valid Adj Close or confirmation of consistent OHLC adjustment.';}
+ else if(prediction<=cost+threshold){status='avoid';reason='Estimated return does not exceed costs plus the entry margin.';}
+ else if(latestVol>.15){status='wait';reason='Recent volatility is high for this horizon; entry conditions are not confirmed.';}
+ else if(ready){status='enter';reason='The forecast is positive and initial test rules are met. Signal reliability has not been validated across multiple stocks and independent periods.';}
  return {version:VERSION,h,cost,threshold,winner,summaries,prediction,latestVol,status,reason,ready,stale,gaps,largeMoves,sim,lastDate:rows.at(-1).date,rows:rows.length,split:{train:[rows[train[0].i].date,rows[train.at(-1).i].date,train.length],validation:[rows[val[0].i].date,rows[val.at(-1).i].date,val.length],test:[rows[test[0].i].date,rows[test.at(-1).i].date,test.length],purge:h},forecasts:test.map((d,k)=>({date:rows[d.i].date,index:d.i,prediction:chosenPred[k],realized:d.y,end:rows[d.end].date})),trainingCutoff:rows[testStart].date};
 }
 function demoCSV(n=1800){const random=rng(491),data=['Date,Open,High,Low,Close,Adj Close,Volume'];let price=100,date=new Date('2019-01-01T00:00:00Z');for(let i=0;i<n;i++){while([0,6].includes(date.getUTCDay()))date.setUTCDate(date.getUTCDate()+1);const open=price*Math.exp((random()-.5)*.01),r=.0002+.002*Math.sin(i/70)+(random()-.5)*.035;price=open*Math.exp(r);const hi=Math.max(open,price)*(1+random()*.012),lo=Math.min(open,price)*(1-random()*.012);data.push([date.toISOString().slice(0,10),open.toFixed(4),hi.toFixed(4),lo.toFixed(4),price.toFixed(4),price.toFixed(4),Math.round(1e6*(.5+random()))].join(','));date.setUTCDate(date.getUTCDate()+1);}return data.join('\n');}
