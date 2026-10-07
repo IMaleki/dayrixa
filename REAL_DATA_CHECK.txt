@@ -1,0 +1,39 @@
+DAYRIXA 3.4.2 — supplied workbook verification
+Source: Copie de TP_MC-A23_Okey(1).xlsx; sheet Données.
+207 observations, 2006-09-29 to 2023-11-30; 9 populated columns.
+Two header rows. Actual alias: Rl (lowercase L), not RI.
+No missing cells in the 207 x 9 data region.
+Rf varies: minimum 0.04, maximum 4.94, 121 distinct values.
+The annualized/period-return definition of Rf is not documented in the
+workbook headers. No frequency conversion has been assumed.
+
+Actual SheetJS 0.18.5 parser and DAYRIXA importer were run against XLSX.
+After applying detected headers, every numeric cell matches independent
+Open XML extraction exactly (maximum absolute difference 0).
+Formatting-only columns J:P previously appeared as empty columns;
+3.4.2 removes them during import. Source workbook was not edited.
+
+OLS: Rl ~ Rm + Rf + Rb, including intercept
+N=207; R2=0.8103816625024078; adjusted R2=0.8075794210615568.
+Term       Coefficient        Conventional SE      t
+Intercept -0.391632427650      0.189899865287       -2.062310192050
+Rm         0.881092720358      0.304205454653        2.896373838407
+Rf         0.254331401267      0.099079952332        2.566931001486
+Rb         0.114472062614      0.309539565142        0.369813993120
+Full matrix rank: 4 of 4. No perfect collinearity.
+App beta and SE matched independent NumPy to tolerance 1e-9.
+This reproduces the original reported N=207 and R2=0.8104.
+
+CAPM numerical check using Rf exactly as supplied, WITHOUT conversion:
+Rl - Rf = alpha + beta * (Rm - Rf) + error
+alpha=-0.0747638889933; SE=0.136453426724; t=-0.547907742504.
+beta=0.964298475089; SE=0.031829214167; t=30.296018934991.
+R2=0.817428662970; adjusted R2=0.816538071082; N=207.
+This verifies arithmetic only. Economic interpretation requires confirming
+that Rf and asset/market returns share frequency and units. A monthly date
+label does not establish that a quoted bill yield is a monthly return.
+
+All prior research-core, coefficient restriction, merge, legacy controls
+and simulated-DOM workflow test suites passed on 3.4.2.
+Actual file parsing tested in Node. Real browser layout/downloads not tested.
+Private source workbook and extracted rows are not bundled in this release.

@@ -1,0 +1,66 @@
+Historical 3.4.1 record. For current actual-file/Excel verification see REAL_DATA_CHECK.txt.
+
+DAYRIXA Research Studio v3.4.1 — verification record
+Date: 2026-09-16
+
+EXECUTED / PASSED
+1. research-core.test.cjs
+   Safe expression parser, aliases, arithmetic precedence, comparisons,
+   missing/domain errors, panel-ordered lag/difference/growth, invalid
+   expressions and ambiguous variable rejection.
+   QR OLS and HC1 reference cases, with and without intercept, compared
+   to independently generated NumPy references (ols-reference.json).
+   Shared samples, singular design rejection, HTML/CSV escaping.
+2. merge.test.cjs
+   Panel-to-macro many-to-one and panel-to-panel compound joins;
+   exact left-row count/order and lineage invariants; left/inner joins;
+   duplicate-right-key blocking; normalization to month causing key
+   collisions; strict calendar validity; missing keys; case/leading-zero
+   semantics; output name collisions; key suggestions.
+3. studio-workflow.test.cjs
+   Actual research-studio and Data Analyst JavaScript in a custom DOM
+   harness. Synthetic upload -> variable preview/apply -> panel lag ->
+   undo/redo -> save two models -> common-sample comparison -> report /
+   CSV -> project round trip -> invalid project rejection -> cleaning /
+   restore. Second CSV upload -> preview/acknowledgment -> apply merge ->
+   undo/redo -> report/project provenance -> duplicate-key blocking.
+   Failed primary import retains the prior working dataset.
+4. data-tools.test.cjs
+   Existing regression coefficients/SE/t against NumPy-derived values;
+   formula validation; RI matching; unknown trends; collapsed data tables;
+   CSV parsing; generated suggestions; Top/Bottom and Group by; trends;
+   missing data; outlier review/removal; data cleaning.
+5. JavaScript syntax checks and ZIP integrity check.
+
+TEST ENVIRONMENT / LIMITS
+Node.js; deterministic datasets; custom DOM and canvas doubles.
+These tests exercise calculations and event handlers, not a real browser's
+layout, keyboard behavior, native download prompts or chart pixels.
+The available remote browser cannot access this local application.
+No claim of Chrome/Safari/mobile browser acceptance testing is made.
+Excel parsing/CDN availability was not exercised end-to-end.
+The user's original 207-row regression dataset was not available for
+reproducing its exact reported R². Synthetic and independent-reference
+cases verify the numerical implementation instead.
+No live AI, authentication, payments or cloud persistence is implemented.
+
+REMAINING RELEASE GATES BEFORE SELLING
+Real-browser desktop/mobile acceptance and accessibility review;
+CSV/Excel fixtures from target customers; load/memory benchmarks;
+additional statistical validation for new estimators; dependency/license
+review; product-specific security and data handling review; user pilots.
+Existing Web3/testnet and scholarly tools were not fully regression-tested
+as part of this Data Analyst feature update.
+
+ADDITIONAL 3.4.1 CHECKS — PASSED
+coefficients.test.cjs: fixed alpha, fixed beta, all-fixed equation,
+conditional OLS/HC1 SE against independent analytic calculations,
+residual degrees of freedom, invalid restrictions, constrained comparisons
+and named constant-predictor diagnosis.
+studio-workflow.test.cjs: CAPM variable construction and arithmetic,
+fixed-alpha controls, saving/reporting/reopening constrained models,
+synthetic data banner and cancellation of demo replacement.
+Existing core/reference, merge and legacy Data Analyst tests pass.
+The real Excel dataset in the user's screenshot was not supplied; its
+full numerical results cannot be reproduced from screenshots alone.
+Real-browser rendering and Excel end-to-end validation remain unverified.
