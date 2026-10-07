@@ -6,8 +6,8 @@
 <title>DAYRIXA AI Hub — Prototype v13.1</title>
 <meta name="description" content="DAYRIXA AI Hub experimental prototype. Testnet project. No monetary value.">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link rel="stylesheet" href="styles-v3-1.css?v=3.1">
-<meta name="dayrixa-public-version" content="3.1-final-clean">
+<link rel="stylesheet" href="styles-v3-1.css?v=3.5.0">
+<meta name="dayrixa-public-version" content="3.5.0-data-tools-fix">
 </head>
 <body>
 <div class="dayrixa-public-brand">
@@ -35,6 +35,7 @@
   </div>
 
   <nav class="side-nav">
+    <a class="nav-item" href="entry/" style="text-decoration:none"><span class="ico" aria-hidden="true">▥</span><span>Entry Lab · تحلیل بازده سهام</span></a>
     <button class="nav-item active" data-view="home">
       <span class="ico">⌂</span><span>Hub Home</span>
     </button>
@@ -44,8 +45,8 @@
     <button class="nav-item" data-view="research">
       <span class="ico">⌕</span><span>Research Agent</span><small>beta</small>
     </button>
-    <button class="nav-item locked" data-view="data">
-      <span class="ico">▥</span><span>Data Analyst</span><small>soon</small>
+    <button class="nav-item" data-view="data">
+      <span class="ico">▥</span><span>Data Analyst</span><small>beta</small>
     </button>
   </nav>
 
@@ -89,6 +90,7 @@
           navigation and future credit layer.
         </p>
         <div class="hero-actions">
+          <a class="secondary" href="entry/" style="text-decoration:none">Entry Lab · بررسی فایل قیمت سهام</a>
           <button class="primary" data-open="sentiment">Launch first AI tool</button>
           <button class="secondary" id="architectureBtn">View architecture</button>
         </div>
@@ -109,7 +111,7 @@
         <div class="eyebrow">TOOLS</div>
         <h2>AI workspace</h2>
       </div>
-      <span class="micro">2 working modules · live academic search enabled</span>
+      <span class="micro">3 working modules · research + browser data analysis</span>
     </div>
 
     <div class="tool-grid">
@@ -134,11 +136,12 @@
         <button class="card-btn" data-open="research">Open agent →</button>
       </article>
 
-      <article class="tool-card muted-card">
-        <div class="tool-top"><div class="tool-icon">▥</div><span class="soon-pill">PLANNED</span></div>
+      <article class="tool-card live-card">
+        <div class="tool-top"><div class="tool-icon">▥</div><span class="live-pill">BETA</span></div>
         <h3>Data Analyst</h3>
-        <p>Planned module for CSV analysis, summaries, charts and explainable data workflows.</p>
-        <div class="tool-meta"><span>Planned</span><span>Data</span></div>
+        <p>Upload CSV or Excel data, inspect quality, discover KPIs, visualize trends and ask questions in plain English.</p>
+        <div class="tool-meta"><span>CSV / XLSX</span><span>Private browser analysis</span><span>Charts</span></div>
+        <button class="card-btn" data-open="data">Open analyst →</button>
       </article>
     </div>
 
@@ -391,9 +394,74 @@
     </div>
   </section>
 
+
+  <section id="view-data" class="view">
+    <div class="tool-header">
+      <button class="back" data-open="home">← Hub</button>
+      <div class="eyebrow">DAYRIXA · DATA ANALYST BETA</div>
+      <h1>Your data. Your research.</h1>
+      <p>Start with a file. Prepare your sample, explore a model and keep the steps for next time.</p>
+    </div>
+
+    <div class="data-shell">
+      <label class="data-drop" id="dataDrop">
+        <input id="dataFile" type="file" accept=".csv,.xlsx,.xls,text/csv" hidden>
+        <span class="data-upload-icon">⇧</span>
+        <strong>Drop a dataset here</strong>
+        <span>CSV, XLSX or XLS · processed locally in your browser</span>
+        <span class="data-choose">Choose file</span>
+      </label>
+      <details class="studio-start-options"><summary>Try a demo or reopen a saved project</summary><div class="studio-start"><button type="button" id="studioDemo" class="secondary">Load synthetic demo (not your research data)</button><label>Reopen a DAYRIXA project <input type="file" id="studioReopen" accept=".json,application/json"></label></div></details>
+      <div id="dataStatus" class="data-status">Your analysis workspace is ready.</div>
+
+      <div id="dataWorkspace" class="data-workspace hidden">
+        <div id="researchStudio"></div>
+        <details class="studio-legacy" id="legacyTools"><summary>Explore data &amp; additional tools</summary><div class="data-kpis" id="dataKpis"></div>
+        <div class="data-grid">
+          <section class="data-panel">
+            <div class="research-label">Dataset profile</div>
+            <div id="dataProfile"></div>
+          </section>
+          <section class="data-panel">
+            <div class="research-label">Data quality</div>
+            <div id="dataQuality"></div>
+          </section>
+        </div>
+        <section class="data-panel">
+          <div class="research-label">Suggested questions</div>
+          <div id="dataSuggestions" class="data-suggestions"></div>
+        </section>
+        <section class="data-panel data-quick-panel">
+          <div class="research-label">Quick analysis</div>
+          <div class="data-quick-note">One-click analyses adapt to the fields detected in your dataset. No columns are removed automatically.</div>
+          <div id="dataQuickActions" class="data-quick-actions"></div>
+          <div id="dataQuickConfig" class="data-quick-config hidden"></div>
+        </section>
+        <section class="data-panel ask-panel">
+          <div class="research-label">Ask your data</div>
+          <div class="data-ask-row">
+            <input id="dataQuestion" type="text" placeholder="e.g. What are the top 5 products by sales?">
+            <button id="dataAskBtn" class="primary">Analyze</button>
+          </div>
+          <div class="data-hint">Try top/bottom categories, totals, averages, monthly trends, missing values or correlations. Suggested questions adapt to your columns.</div>
+        </section>
+        </details><section class="data-panel data-answer-panel">
+          <div class="research-label">Analysis result</div>
+          <div id="dataAnswer" class="data-answer-empty">Ask a question or choose a suggestion above.</div>
+          <div id="dataChartWrap" class="data-chart-wrap hidden"><canvas id="dataChart"></canvas></div>
+          <div id="dataTableWrap"></div>
+        </section>
+      </div>
+    </div>
+    <div class="privacy-strip"><strong>Privacy boundary</strong><span>Dataset parsing and calculations run in your browser. This beta does not upload your file to a DAYRIXA server.</span></div>
+  </section>
+
 </main>
 
-<script type="module" src="app-v3-1.js?v=3.1"></script>
+<script src="research-core.js?v=3.5.0"></script>
+<script src="research-workflow.js?v=3.5.0"></script>
+<script src="research-studio.js?v=3.5.0"></script>
+<script type="module" src="app-v3-1.js?v=3.5.0"></script>
 
 <footer class="dayrixa-public-footer">
   <div><strong>DAYRIXA AI Hub</strong> · Experimental Research Assistant</div>
