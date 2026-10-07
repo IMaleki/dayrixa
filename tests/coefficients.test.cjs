@@ -1,0 +1,18 @@
+const A=require('node:assert/strict'),C=require('../ai/research-core.js');
+const rows=[1,2,3,4,5,6].map((x,i)=>({x,y:1.2+2*x+[.1,-.2,.3,-.1,.2,-.3][i],rf:.1}));
+const near=(a,b)=>A(Math.abs(a-b)<1e-9,`${a} != ${b}`);
+const spec={y:'y',xs:['x'],intercept:true,seType:'OLS'};
+let fit=C.fit(rows,{...spec,fixed:{Intercept:1.2}});
+const expected=rows.reduce((s,r)=>s+r.x*(r.y-1.2),0)/rows.reduce((s,r)=>s+r.x*r.x,0);
+near(fit.terms[1].beta,expected);A.equal(fit.df,5);A.equal(fit.terms[0].fixed,true);A.equal(fit.terms[0].se,null);
+const residuals=rows.map(r=>r.y-1.2-expected*r.x),sse=residuals.reduce((s,r)=>s+r*r,0),xx=rows.reduce((s,r)=>s+r.x*r.x,0);
+near(fit.terms[1].se,Math.sqrt(sse/5/xx));
+fit=C.fit(rows,{...spec,seType:'HC1',fixed:{Intercept:1.2}});near(fit.terms[1].se,Math.sqrt(rows.reduce((s,r,i)=>s+r.x*r.x*residuals[i]**2,0)/xx**2*6/5));
+fit=C.fit(rows,{...spec,fixed:{x:2}});near(fit.terms[0].beta,1.2);A.equal(fit.terms[1].t,null);
+fit=C.fit(rows,{...spec,fixed:{Intercept:1.2,x:2}});A.equal(fit.estimated,0);A.equal(fit.df,6);A(fit.terms.every(t=>t.fixed));near(fit.sse,.28);
+A.throws(()=>C.fit(rows,{...spec,xs:['x','rf']}),/Constant predictor rf/);
+fit=C.fit(rows,{...spec,xs:['x','rf'],fixed:{rf:0}});near(fit.terms[1].beta,C.fit(rows,spec).terms[1].beta);
+A.throws(()=>C.fit(rows,{...spec,fixed:{bad:1}}),/Fixed coefficients/);
+A.throws(()=>C.fit(rows,{...spec,fixed:{x:NaN}}),/finite/);
+const pair=C.compare(rows,[spec,{...spec,fixed:{Intercept:0}}]);A.equal(pair[1].terms[0].beta,0);A.deepEqual(pair[0].ids,pair[1].ids);
+console.log('PASS: fixed alpha, fixed beta, all-fixed model, conditional OLS/HC1 SE, degrees of freedom, constant-column diagnosis, constraint validation and constrained comparison.');

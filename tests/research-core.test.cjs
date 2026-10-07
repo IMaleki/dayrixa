@@ -1,0 +1,35 @@
+const assert=require('node:assert/strict');
+const C=require('../ai/research-core.js');
+const cols=['DJCASG Index — RI','SPTSX Index — Rm','Rf','Date','Fund'];
+const rows=[{[cols[0]]:5,[cols[1]]:2,Rf:1,Date:'2020-03-01',Fund:'A'},{[cols[0]]:2,[cols[1]]:0,Rf:1,Date:'2020-01-01',Fund:'A'},{[cols[0]]:10,[cols[1]]:2,Rf:'',Date:'2020-01-01',Fund:'B'},{[cols[0]]:4,[cols[1]]:2,Rf:1,Date:'2020-02-01',Fund:'A'}];
+const calc=(f,opt={})=>C.evaluateExpression(f,rows,cols,opt);
+assert.deepEqual(calc('RI - Rf'),[4,1,null,3]);
+assert.deepEqual(calc('`DJCASG Index — RI` / Rm'),[2.5,null,5,2]);
+assert.deepEqual(calc('(RI + 1) * 2'),[12,6,22,10]);
+assert.deepEqual(calc('RI > 4'),[1,0,1,0]);
+assert.deepEqual(calc('-2^2 + 2^3^2'),[508,508,508,508]);
+assert.deepEqual(calc('sqrt(-RI)'),[null,null,null,null]);
+assert.deepEqual(calc('lag(RI, 1)',{time:'Date',entity:'Fund'}),[4,null,null,2]);
+assert.deepEqual(calc('diff(RI, 1)',{time:'Date',entity:'Fund'}),[1,null,null,2]);
+assert.deepEqual(calc('pct_change(RI, 1)',{time:'Date',entity:'Fund'}),[25,null,null,100]);
+assert.throws(()=>calc('lag(RI,1)'),/explicit time/);
+assert.throws(()=>calc('lag(RI,1)',{time:'Date'}),/Duplicate/);
+for(const bad of ['alert(1)','RI.constructor','RI +','RI; 1','unknown + 1','Math.random()','lag(RI, 0)'])assert.throws(()=>calc(bad,{time:'Date',entity:'Fund'}));
+assert.throws(()=>C.resolve('RI',['First — RI','Second — RI']),/Ambiguous/);
+assert.equal(C.number('   '),NaN);assert.equal(C.number('5%'),5);
+const data=[5,4,8,7,11,10,15,12].map((y,i)=>({y,x:i+1,z:[3,1,4,2,5,3,6,4][i]}));
+const spec={y:'y',xs:['x','z'],intercept:true,seType:'OLS'},fit=C.fit(data,spec);
+const near=(a,b,tol=1e-7)=>assert.ok(Math.abs(a-b)<tol,`${a} vs ${b}`);
+[.75,.9,1.2].forEach((b,i)=>near(fit.terms[i].beta,b));
+[.5123475383,.1039230485,.1587450787].forEach((b,i)=>near(fit.terms[i].se,b));near(fit.r2,.984375);
+assert.throws(()=>C.fit(data,{...spec,xs:['x','x']}),/distinct/);
+assert.throws(()=>C.fit(data.map(r=>({...r,z:r.x*2})),spec),/collinear/);
+const missing=data.map((r,i)=>({...r,z:i===0?null:r.z}));
+const common=C.compare(missing,[{...spec,xs:['x']},spec],true),available=C.compare(missing,[{...spec,xs:['x']},spec],false);
+assert.equal(common[0].n,7);assert.deepEqual(common[0].ids,common[1].ids);assert.equal(available[0].n,8);assert.equal(available[1].n,7);
+assert.throws(()=>C.compare(data,[spec,{...spec,y:'z',xs:['x']}]),/same dependent/);
+assert.ok(C.csv([['=1+1',-4]]).includes("'=1+1"));assert.equal(C.escape('<script>'),'&lt;script&gt;');
+// Reference JSON is generated independently with NumPy, including HC1 and no intercept.
+const reference=require('./ols-reference.json');
+for(const ref of reference){const got=C.fit(ref.rows,ref.spec);got.terms.forEach((t,i)=>{near(t.beta,ref.beta[i],1e-6);near(t.se,ref.se[i],1e-6);});near(got.r2,ref.r2,1e-7);near(got.adj,ref.adj,1e-7);}
+console.log('PASS: safe expressions, panel-ordered lag/difference/growth, missing and domain errors, QR OLS/HC1 vs NumPy, common samples, CSV escaping.');

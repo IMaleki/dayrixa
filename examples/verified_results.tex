@@ -1,0 +1,33 @@
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\usepackage[margin=25mm]{geometry}
+\usepackage{longtable}
+\begin{document}
+\raggedright
+\section*{DAYRIXA research results}
+DAYRIXA 3.5.0; Source: Copie de TP\_MC-A23\_Okey(1).xlsx; Data revision: 1\par
+\subsection*{OLS verification}
+Rl \textasciitilde{} Rm + Rf + Rb\par
+Errors: OLS; intercept: included; data revision: 1\par
+\begin{longtable}{p{0.32\linewidth}rrrr}
+Term & Coefficient & SE & t & Fixed \\ \hline
+Intercept & -0.391632 & 0.189900 & -2.062310 & No \\
+Rm & 0.881093 & 0.304205 & 2.896374 & No \\
+Rf & 0.254331 & 0.099080 & 2.566931 & No \\
+Rb & 0.114472 & 0.309540 & 0.369814 & No \\
+\end{longtable}
+\begin{tabular}{lr}
+N & 207 \\
+Excluded rows & 0 \\
+R-squared & 0.810382 \\
+Adjusted R-squared & 0.807579 \\
+Residual df & 203 \\
+Residual SE & 1.913179 \\
+\end{tabular}\par
+\section*{Method and notes}
+Values verified against an independent NumPy calculation. This example is the multivariate model, not CAPM.\par
+Fixed coefficients are imposed, with no estimated SE or t. OLS/HC1 do not adjust for clustering or serial correlation. Model differences do not establish causality.\par
+Interpret the source headers: Date, Rm, Rf, Rs, Rb, Rh, Rl, D/P, TB\par
+\par
+\small Created and developed by Iman Malekikhajkolaei. Copyright 2026 DAYRIXA.
+\end{document}
